@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -31,6 +32,12 @@ public class Principal {
 	 */
 	public static void main(String[] args) {
 		
+		String Pathfile="test2.dot";
+		if (args.length>2)
+			Pathfile=args[2];
+		
+		else
+			Arrays.toString(args);
 		
 		ArrayList<String> listatotal=new ArrayList<String>();
 		
@@ -38,7 +45,7 @@ public class Principal {
 		
 		try
 		{
-		FileReader lector=new FileReader("test1.dot");
+		FileReader lector=new FileReader(Pathfile);
 
 		BufferedReader contenido=new BufferedReader(lector);
 
@@ -53,7 +60,7 @@ public class Principal {
 		File folder = new File("/opt/fcalgs/");
 		folder.mkdirs();
 		
-		
+		int anterior = -1; 
 		
 		ArrayList<String> BufferExcel=new ArrayList<String>();
 		BufferExcel.add("ITERATION;VALUE");
@@ -68,6 +75,9 @@ public class Principal {
 		            bw = new BufferedWriter(new FileWriter(archivo));
 		        }
 			
+			 
+			
+			 
 			for (int j = 0; j < i; j++) 
 		        bw.write(listatotal.get(j)+"\n");
 
@@ -80,9 +90,12 @@ public class Principal {
 			 
 			 try
 		      {
-		          theProcess = Runtime.getRuntime().exec("/fcbo-ins/fcbo-static-windows-i686.exe /opt/fcalgs/"+i+".dot"
-		      //+" /opt/fcalgs/"+i+"res.dot"
+		          theProcess = 
+		        		  Runtime.getRuntime().exec("/fcbo-ins/fcbo-static-windows-i686.exe /opt/fcalgs/"+i+".dot"
+		      +" /opt/fcalgs/"+i+"res.dot"
 		        		  );
+		          
+		      //		          theProcess.waitFor();
 		      }
 		      catch(IOException e)
 		      {
@@ -90,35 +103,61 @@ public class Principal {
 		         e.printStackTrace();
 		      }
 		        
-		      try
-		      {
-		         inStream = new BufferedReader(
-		                                new InputStreamReader( theProcess.getInputStream() ));
-		        
-		         ArrayList<String> listatotal2=new ArrayList<String>();
-		         String texto2="";
-		         while((texto2=inStream.readLine())!=null)
-		 		{
-		 	//	System.out.println(texto2);
-		 		listatotal2.add(texto2);
-		 		}
-		         if (listatotal2.size()==0)
+			 try
+				{
+			 
+			 inStream = new BufferedReader(
+                     new InputStreamReader( theProcess.getInputStream() ));
+
+			 @SuppressWarnings("unused")
+			String texto3="";
+			while((texto3=inStream.readLine())!=null);
+			
+			 
+			 
+			 ArrayList<String> listatotal2=new ArrayList<String>();
+				
+				String texto2="";
+				
+				
+					
+				File archivo2 = new File("/opt/fcalgs/"+i+"res.dot");	
+				
+				FileReader lector2=new FileReader(archivo2);
+
+				BufferedReader contenido2=new BufferedReader(lector2);
+
+				while((texto=contenido2.readLine())!=null)
+					listatotal2.add(texto2);
+				
+				contenido2.close();
+				
+				if (listatotal2.size()<anterior)
 		        	 break;
-		      //   System.out.println("<<<<<<<<<<<<Salida>>>>>>>>>"+listatotal2.size());
-//		         System.out.println(inStream.readLine());
+		         else
+		        	 anterior=listatotal2.size();
+		         
 		         BufferExcel.add(i+";"+listatotal2.size());
-		         System.out.println(listatotal2.size());
+		         System.out.println(anterior);
+     
+		         
+		         File archivo3 = new File("/opt/fcalgs/"+(i-1)+"res.dot");	
+		         if (archivo3.exists())
+		        	 archivo3.delete();
+		         
+		         archivo.delete();
+		         
 		      }
 		      catch(IOException e)
 		      {
 		         System.err.println("Error en inStream.readLine()");
 		         e.printStackTrace();
-		      }
-		      
-		      
-		      
+		      }  
 			
 		}
+		
+		
+
 		
 		String rutaArchivo = "/opt/fcalgs/Result"+System.nanoTime()+".xlsx";
 	     File archivoXLS = new File(rutaArchivo);
