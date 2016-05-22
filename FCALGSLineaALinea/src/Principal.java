@@ -91,7 +91,7 @@ public class Principal {
 			 try
 		      {
 		          theProcess = 
-		        		  Runtime.getRuntime().exec("/fcbo-ins/fcbo-static-windows-i686.exe /opt/fcalgs/"+i+".dot"
+		        		  Runtime.getRuntime().exec("/pcbo-amai/pcbo-windows-i686-static.exe /opt/fcalgs/"+i+".dot"
 		      +" /opt/fcalgs/"+i+"res.dot"
 		        		  );
 		          
