@@ -166,7 +166,7 @@ public class Principal {
 			 Long End=System.nanoTime();
 			 
 			 long Duracion = End-Start;
-			 double seconds = (double)Duracion / 1000000000.0;
+			 double seconds = (double)Duracion / 1e9;
 			 if (seconds>30)
 				 break;
 		}
