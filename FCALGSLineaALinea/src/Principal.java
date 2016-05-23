@@ -67,6 +67,10 @@ public class Principal {
 		
 		for (int i = 1; i <= listatotal.size(); i++) {
 			
+			
+			Long Start=System.nanoTime();
+			
+			
 			File archivo = new File("/opt/fcalgs/"+i+".dot");
 			BufferedWriter bw;
 			 if(archivo.exists()) {
@@ -87,6 +91,9 @@ public class Principal {
 			  
 			 Process theProcess = null;
 			 BufferedReader inStream = null;
+			 
+			 
+			 
 			 
 			 try
 		      {
@@ -127,6 +134,8 @@ public class Principal {
 
 				BufferedReader contenido2=new BufferedReader(lector2);
 
+				
+				
 				while((texto=contenido2.readLine())!=null)
 					listatotal2.add(texto2);
 				
@@ -153,7 +162,13 @@ public class Principal {
 		         System.err.println("Error en inStream.readLine()");
 		         e.printStackTrace();
 		      }  
-			
+			 
+			 Long End=System.nanoTime();
+			 
+			 long Duracion = End-Start;
+			 double seconds = (double)Duracion / 1000000000.0;
+			 if (seconds>30)
+				 break;
 		}
 		
 		
