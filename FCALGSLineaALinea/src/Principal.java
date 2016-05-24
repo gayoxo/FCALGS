@@ -33,11 +33,38 @@ public class Principal {
 	public static void main(String[] args) {
 		
 		String Pathfile="test2.dot";
-		if (args.length>2)
-			Pathfile=args[2];
+		String Folder="";
+		int intsecuence=10;
+		int maxtime=60;
 		
-		else
-			Arrays.toString(args);
+		System.out.println(Arrays.toString(args));
+		
+		for (int i = 0; i < args.length; i++) {
+			if (i==0)
+				Pathfile=args[0];
+			
+			if (i==1)
+				Folder="/"+args[1]+"/";
+			
+			if (i==2)
+				{
+				try {
+					intsecuence=Integer.parseInt(args[2]);
+				} catch (Exception e) {
+					System.err.println("Secuence is not a number, used 10 instead");
+				}
+				}
+			
+			if (i==3)
+			{
+			try {
+				maxtime=Integer.parseInt(args[3]);
+			} catch (Exception e) {
+				System.err.println("Secuence is not a number, used 10 instead");
+			}
+			}
+		}
+		
 		
 		ArrayList<String> listatotal=new ArrayList<String>();
 		
@@ -57,7 +84,7 @@ public class Principal {
 		
 		contenido.close();
 		
-		File folder = new File("/opt/fcalgs/");
+		File folder = new File("/opt/fcalgs/"+Folder);
 		folder.mkdirs();
 		
 		int anterior = -1; 
@@ -65,13 +92,13 @@ public class Principal {
 		ArrayList<String> BufferExcel=new ArrayList<String>();
 		BufferExcel.add("ITERATION;VALUE");
 		
-		for (int i = 1; i <= listatotal.size(); i++) {
+		for (int i = 1; i <= (listatotal.size()+intsecuence-1); i=i+intsecuence) {
 			
 			
 			Long Start=System.nanoTime();
 			
 			
-			File archivo = new File("/opt/fcalgs/"+i+".dot");
+			File archivo = new File("/opt/fcalgs/"+Folder+i+".dot");
 			BufferedWriter bw;
 			 if(archivo.exists()) {
 		            bw = new BufferedWriter(new FileWriter(archivo));
@@ -82,7 +109,7 @@ public class Principal {
 			 
 			
 			 
-			for (int j = 0; j < i; j++) 
+			for (int j = 0; j < i && j < listatotal.size(); j++) 
 		        bw.write(listatotal.get(j)+"\n");
 
 			
@@ -98,8 +125,8 @@ public class Principal {
 			 try
 		      {
 		          theProcess = 
-		        		  Runtime.getRuntime().exec("/pcbo-amai/pcbo-windows-i686-static.exe /opt/fcalgs/"+i+".dot"
-		      +" /opt/fcalgs/"+i+"res.dot"
+		        		  Runtime.getRuntime().exec("/pcbo-amai/pcbo-windows-i686-static.exe /opt/fcalgs/"+Folder+i+".dot"
+		      +" /opt/fcalgs/"+Folder+i+"res.dot"
 		        		  );
 		          
 		      //		          theProcess.waitFor();
@@ -108,6 +135,8 @@ public class Principal {
 		      {
 		         System.err.println("Error en el método exec()");
 		         e.printStackTrace();
+		         System.out.println("FIN PREMEDITADO POR ERROR");
+				 break;
 		      }
 		        
 			 try
@@ -128,7 +157,7 @@ public class Principal {
 				
 				
 					
-				File archivo2 = new File("/opt/fcalgs/"+i+"res.dot");	
+				File archivo2 = new File("/opt/fcalgs/"+Folder+i+"res.dot");	
 				
 				FileReader lector2=new FileReader(archivo2);
 
@@ -142,15 +171,18 @@ public class Principal {
 				contenido2.close();
 				
 				if (listatotal2.size()<anterior)
-		        	 break;
+		        	 {
+					 System.out.println("FIN PREMEDITADO POR ERROR EN EJECUCION");
+					 break;
+		        	 }
 		         else
 		        	 anterior=listatotal2.size();
 		         
 		         BufferExcel.add(i+";"+listatotal2.size());
-		         System.out.println(anterior);
+		         
      
 		         
-		         File archivo3 = new File("/opt/fcalgs/"+(i-1)+"res.dot");	
+		         File archivo3 = new File("/opt/fcalgs/"+Folder+(i-intsecuence)+"res.dot");	
 		         if (archivo3.exists())
 		        	 archivo3.delete();
 		         
@@ -161,20 +193,28 @@ public class Principal {
 		      {
 		         System.err.println("Error en inStream.readLine()");
 		         e.printStackTrace();
+		         System.out.println("FIN PREMEDITADO POR ERROR");
+				 break;
 		      }  
 			 
 			 Long End=System.nanoTime();
 			 
 			 long Duracion = End-Start;
 			 double seconds = (double)Duracion / 1e9;
-			 if (seconds>30)
+			 if (maxtime>0&&seconds>maxtime)
+				 {
+				 System.out.println("FIN PREMEDITADO POR TIEMPO:"+Math.round(seconds));
 				 break;
+				 }
+			 
+			 
+			 System.out.println(anterior+"->"+Math.round(seconds)+"s");
 		}
 		
 		
 
 		
-		String rutaArchivo = "/opt/fcalgs/Result"+System.nanoTime()+".xlsx";
+		String rutaArchivo = "/opt/fcalgs/"+Folder+"Result"+System.nanoTime()+".xlsx";
 	     File archivoXLS = new File(rutaArchivo);
 	     if(archivoXLS.exists()) archivoXLS.delete();
 	     archivoXLS.createNewFile();
@@ -213,7 +253,7 @@ public class Principal {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		System.out.println("Error al leer");
+		System.out.println("Error Total");
 		}
 		
 
